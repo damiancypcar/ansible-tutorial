@@ -20,7 +20,6 @@ Vagrant.configure("2") do |config|
        echo "10.8.8.30 cent"
        echo "10.8.8.40 rhel") >> /etc/hosts
     SHELL
-    # master.vm.synced_folder "./data", "/vagrant_data"
     master.vm.provision "shell", inline: <<-SHELL
       apt-get update | echo "Updating apt..."
       apt-get install -y ansible >/dev/null | echo "Installing pkgs..."
