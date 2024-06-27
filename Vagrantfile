@@ -15,10 +15,10 @@ Vagrant.configure("2") do |config|
     master.vm.box = "debian/bookworm64"
     master.vm.network "private_network", ip: "10.8.8.1", virtualbox__intnet: "ansible"
     master.vm.provision "shell", inline: <<-SHELL
-      (echo "10.8.8.10 node1"
-       echo "10.8.8.20 node2"
-       echo "10.8.8.30 node3"
-       echo "10.8.8.40 node4") >> /etc/hosts
+      (echo "10.8.8.10 deb"
+       echo "10.8.8.20 ubu"
+       echo "10.8.8.30 cent"
+       echo "10.8.8.40 rhel") >> /etc/hosts
     SHELL
     # master.vm.synced_folder "./data", "/vagrant_data"
     master.vm.provision "shell", inline: <<-SHELL
@@ -27,28 +27,28 @@ Vagrant.configure("2") do |config|
     SHELL
   end
   
-  config.vm.define "debian" do |debian|
-    debian.vm.hostname = "debian"
-    debian.vm.box_check_update = false
-    debian.vm.box = "debian/bookworm64"
-    debian.vm.network "private_network", ip: "10.8.8.10", virtualbox__intnet: "ansible"
-    debian.vm.provision "shell", inline: "echo '10.8.8.1 master' >> /etc/hosts"
+  config.vm.define "deb" do |deb|
+    deb.vm.hostname = "deb"
+    deb.vm.box_check_update = false
+    deb.vm.box = "debian/bookworm64"
+    deb.vm.network "private_network", ip: "10.8.8.10", virtualbox__intnet: "ansible"
+    deb.vm.provision "shell", inline: "echo '10.8.8.1 master' >> /etc/hosts"
   end
 
-  config.vm.define "ubuntu" do |ubuntu|
-    ubuntu.vm.hostname = "ubuntu"
-    ubuntu.vm.box_check_update = false
-    ubuntu.vm.box = "ubuntu/jammy64"
-    ubuntu.vm.network "private_network", ip: "10.8.8.20", virtualbox__intnet: "ansible"
-    ubuntu.vm.provision "shell", inline: "echo '10.8.8.1 master' >> /etc/hosts"
+  config.vm.define "ubu" do |ubu|
+    ubu.vm.hostname = "ubu"
+    ubu.vm.box_check_update = false
+    ubu.vm.box = "ubuntu/jammy64"
+    ubu.vm.network "private_network", ip: "10.8.8.20", virtualbox__intnet: "ansible"
+    ubu.vm.provision "shell", inline: "echo '10.8.8.1 master' >> /etc/hosts"
   end
 
-  config.vm.define "centos" do |centos|
-    centos.vm.hostname = "centos"
-    centos.vm.box_check_update = false
-    centos.vm.box = "centos/8"
-    centos.vm.network "private_network", ip: "10.8.8.30", virtualbox__intnet: "ansible"
-    centos.vm.provision "shell", inline: "echo '10.8.8.1 master' >> /etc/hosts"
+  config.vm.define "cent" do |cent|
+    cent.vm.hostname = "cent"
+    cent.vm.box_check_update = false
+    cent.vm.box = "centos/8"
+    cent.vm.network "private_network", ip: "10.8.8.30", virtualbox__intnet: "ansible"
+    cent.vm.provision "shell", inline: "echo '10.8.8.1 master' >> /etc/hosts"
   end
   
 
