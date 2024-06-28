@@ -3,10 +3,11 @@
 # boxes at https://vagrantcloud.com/search
 
 Vagrant.configure("2") do |config|
-  # config.vm.provision "shell", inline: <<-SHELL
-  #   apt-get update
-  #   apt-get install -y htop
-  # SHELL
+  config.vm.provision "shell", inline: <<-SHELL
+    echo "Adding keys..."
+    [[ -f /vagrant/ansible/ssh/ansible.pub ]] && { mkdir -p /home/vagrant/.ssh/; cat /vagrant/ansible/ssh/ansible.pub >> /home/vagrant/.ssh/authorized_keys; } || echo "skip"
+    [[ -f /vagrant/ansible/ssh/ansible.pub ]] && { mkdir -p /root/.ssh/; cat /vagrant/ansible/ssh/ansible.pub >> /root/.ssh/authorized_keys; } || echo "skip"
+  SHELL
   config.vm.provision "shell", inline: "echo 'Setup .bashrc'; cat /vagrant/data/vm.bashrc > /home/vagrant/.bashrc"
   
   config.vm.define "master" do |master|
@@ -21,8 +22,21 @@ Vagrant.configure("2") do |config|
        echo "10.8.8.40 rhel") >> /etc/hosts
     SHELL
     master.vm.provision "shell", inline: <<-SHELL
-      apt-get update | echo "Updating apt..."
-      apt-get install -y ansible >/dev/null | echo "Installing pkgs..."
+      apt-get update | echo "Installing ansible..."
+      apt-get install -y ansible
+
+      echo "Generating keys..."
+      ssh-keygen -t ed25519 -C "master ansible" -f ~/.ssh/id_ed25519 -q -N ""
+      cp -f ~/.ssh/id_ed25519* /home/vagrant/.ssh/
+      chown -R vagrant:vagrant /home/vagrant/.ssh/
+      cp -f ~/.ssh/id_ed25519 /vagrant/ansible/ssh/ansible
+      cp -f ~/.ssh/id_ed25519.pub /vagrant/ansible/ssh/ansible.pub
+
+      cp -R /vagrant/ansible /home/vagrant/
+      chown -R vagrant:vagrant /home/vagrant/ansible/
+
+      find /home/vagrant/ansible/ -type d -exec chmod 700 {} \\;
+      find /home/vagrant/ansible/ -type f -exec chmod 600 {} \\;
     SHELL
   end
   
@@ -54,8 +68,9 @@ Vagrant.configure("2") do |config|
   config.vm.define "rhel" do |rhel|
     rhel.vm.hostname = "rhel"
     rhel.vm.box_check_update = false
-    rhel.vm.box = "generic/rhel7"
+    rhel.vm.box = "roboxes/rhel7"
     rhel.vm.network "private_network", ip: "10.8.8.40", virtualbox__intnet: "ansible"
+    rhel.vm.synced_folder ".", "/vagrant"
     rhel.vm.provision "shell", inline: "echo '10.8.8.1 master' >> /etc/hosts"
   end
   
