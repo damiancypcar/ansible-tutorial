@@ -165,32 +165,32 @@ alias aptar='sudo nala autoremove'
 fi
 
 # Auto-launching ssh-agent on Git-Bash start
-SSH_KEYS=( "$HOME/.ssh/github-dc" "$HOME/.ssh/github-xe")
+# SSH_KEYS=( "$HOME/.ssh/github-dc" "$HOME/.ssh/github-xe")
 
-SSH_ENV="$HOME/.ssh/environment"
-function run_ssh_env {
-    . "${SSH_ENV}" > /dev/null
-}
-function start_ssh_agent {
-    echo "Initializing new SSH agent..."
-    ssh-agent | sed 's/^echo/#echo/' > "${SSH_ENV}"
-    echo "succeeded"
-    chmod 600 "${SSH_ENV}"
+# SSH_ENV="$HOME/.ssh/environment"
+# function run_ssh_env {
+#     . "${SSH_ENV}" > /dev/null
+# }
+# function start_ssh_agent {
+#     echo "Initializing new SSH agent..."
+#     ssh-agent | sed 's/^echo/#echo/' > "${SSH_ENV}"
+#     echo "succeeded"
+#     chmod 600 "${SSH_ENV}"
 
-    run_ssh_env;
+#     run_ssh_env;
 
-    for SSH_KEY in "${SSH_KEYS[@]}"; do
-    	ssh-add $SSH_KEY;
-    done
-}
-if [ -f "${SSH_ENV}" ]; then
-    run_ssh_env;
-    ps -ef | grep ${SSH_AGENT_PID} | grep ssh-agent$ > /dev/null || {
-        start_ssh_agent;
-    }
-else
-    start_ssh_agent;
-fi
+#     for SSH_KEY in "${SSH_KEYS[@]}"; do
+#     	ssh-add $SSH_KEY;
+#     done
+# }
+# if [ -f "${SSH_ENV}" ]; then
+#     run_ssh_env;
+#     ps -ef | grep ${SSH_AGENT_PID} | grep ssh-agent$ > /dev/null || {
+#         start_ssh_agent;
+#     }
+# else
+#     start_ssh_agent;
+# fi
 
 # Docker
 if [ "$(command -v docker)" ]; then
